@@ -12,9 +12,9 @@ The kears implementation of character-digit recognition.
 
 # Importing the Keras libraries and packages
 
-from keras.models import Sequential # To initialise the nn as a sequence of layers
-from keras.layers import Convolution2D # To make the convolution layer for 2D images
-from keras.layers import MaxPooling2D # 
+from keras.models import Sequential
+from keras.layers import Convolution2D
+from keras.layers import MaxPooling2D
 from keras.layers import Flatten
 from keras.layers import Dense
 from keras.layers import Dropout
@@ -75,11 +75,10 @@ test_set = validation_generator = test_datagen.flow_from_directory('/home/alim/D
 classifier.fit_generator(train_set,steps_per_epoch=47605,epochs=5,validation_data=test_set,validation_steps=1292,callbacks=[csv])
 
 classifier.save('char-reg.h5')
-import cv2 
+import cv2
 import numpy as np
 img=cv2.imread('temp1.jpg')
 img=cv2.resize(img,(64,64))
 img=np.reshape(img,[1,64,64,3])
 classes=classifier.predict_classes(img)
 print(classes)
-

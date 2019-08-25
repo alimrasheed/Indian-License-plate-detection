@@ -11,7 +11,6 @@ from PIL import Image
 import PossiblePlate
 import pandas as pd
 
-# module level variables ##########################################################################
 SCALAR_BLACK = (0.0, 0.0, 0.0)
 SCALAR_WHITE = (255.0, 255.0, 255.0)
 SCALAR_YELLOW = (0.0, 255.0, 255.0)
@@ -36,7 +35,7 @@ X = dataset.iloc[:,1].values
 image_url = X[5]
 
 #the image is accessed and saved as 'car.jpg' in images
-import urllib.request 
+import urllib.request
 
 urllib.request.urlretrieve(image_url, 'images/car.jpg')
 
@@ -61,18 +60,14 @@ def main(car_image):
     imgOriginalScene  = cv2.imread(car_image)               # open image
     plt.imshow(imgOriginalScene)
     h, w = imgOriginalScene.shape[:2]
-    # As the image may be blurr so we sharpen the image.
-    #kernel_shapening4 = np.array([[-1,-1,-1],[-1,9,-1],[-1,-1,-1]])
-    #imgOriginalScene = cv2.filter2D(imgOriginalScene,-1,kernel_shapening4)
-    
-    #imgOriginalScene = cv2.resize(imgOriginalScene,(1000,600),interpolation = cv2.INTER_LINEAR)
-    
+
+
     imgOriginalScene = cv2.resize(imgOriginalScene, (0, 0), fx = 1.4, fy = 1.4,interpolation=cv2.INTER_CUBIC)
-    
+
     #imgOriginalScene = cv2.fastNlMeansDenoisingColored(imgOriginalScene,None,10,10,7,21)
-    
+
     #imgOriginal = imgOriginalScene.copy()
-    
+
     if imgOriginalScene is None:                            # if image was not read successfully
         print("\nerror: image not read from file \n\n")      # print error message to std out
         os.system("pause")                                  # pause so user can see error message
@@ -86,7 +81,7 @@ def main(car_image):
 
     if showSteps == True:
         Image.fromarray(imgOriginalScene,'RGB').show() # show scene image
-        
+
 
     if len(listOfPossiblePlates) == 0:                          # if no plates were found
         print("\nno license plates were detected\n")             # inform user no plates were found
@@ -103,7 +98,7 @@ def main(car_image):
 
         if showSteps == True:
             Image.fromarray(licPlate.imgPlate).show()    # show crop of plate and threshold of plate
-            
+
         if len(licPlate.strChars) == 0:                     # if no chars were found in the plate
             print("\nno characters were detected\n\n")       # show message
             return ' ',imgOriginalScene                                       # and exit program

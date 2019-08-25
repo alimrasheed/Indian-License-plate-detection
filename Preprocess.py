@@ -4,12 +4,11 @@ import cv2
 import numpy as np
 import math
 import Main
-# module level variables ##########################################################################
+
 GAUSSIAN_SMOOTH_FILTER_SIZE = (5, 5)
 ADAPTIVE_THRESH_BLOCK_SIZE = 19
 ADAPTIVE_THRESH_WEIGHT = 9
 
-###################################################################################################
 def preprocess(imgOriginal):
     imgGrayscale = extractValue(imgOriginal) # We get the gray scale of the image.
     #imgGrayscale = cv2.equalizeHist(imgGrayscale)
@@ -18,13 +17,11 @@ def preprocess(imgOriginal):
     imgBlurred = np.zeros((height, width, 1), np.uint8)
 
     imgBlurred = cv2.GaussianBlur(imgMaxContrastGrayscale, GAUSSIAN_SMOOTH_FILTER_SIZE, 0) # 2nd parameter is (height,width) of Gaussian kernel,3rd parameter is sigmaX,4th parameter is sigmaY(as not specified it is made same as sigmaX).
-    
+
     imgThresh = cv2.adaptiveThreshold(imgBlurred, 255.0, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, ADAPTIVE_THRESH_BLOCK_SIZE, ADAPTIVE_THRESH_WEIGHT)
-    
+
     return imgGrayscale, imgThresh
 
-###################################################################################################
-def extractValue(imgOriginal):
     height, width, numChannels = imgOriginal.shape
 
     imgHSV = np.zeros((height, width, 3), np.uint8)
@@ -35,7 +32,6 @@ def extractValue(imgOriginal):
 
     return imgValue
 
-###################################################################################################
 def maximizeContrast(imgGrayscale):
 
     height, width = imgGrayscale.shape

@@ -12,11 +12,11 @@ from PIL import Image
 import PossiblePlate
 import PossibleChar
 
-# module level variables ##########################################################################
+
 PLATE_WIDTH_PADDING_FACTOR = 1.3
 PLATE_HEIGHT_PADDING_FACTOR = 1.5
 
-###################################################################################################
+
 def detectPlatesInScene(imgOriginalScene):
     listOfPossiblePlates = []                   # this will be the return value
 
@@ -26,20 +26,17 @@ def detectPlatesInScene(imgOriginalScene):
     imgThreshScene = np.zeros((height, width, 1), np.uint8)
     imgContours = np.zeros((height, width, 3), np.uint8)
 
-    if Main.showSteps == True: # show steps #######################################################
-        #cv2.imshow("0", imgOriginalScene)
+    if Main.showSteps == True:
         Image.fromarray(imgOriginalScene).show()
         input('Press any key to continue...')
-        
-    imgGrayscaleScene, imgThreshScene = Preprocess.preprocess(imgOriginalScene)         # preprocess to get grayscale and threshold images
 
-            # find all possible chars in the scene,
-            # this function first finds all contours, then only includes contours that could be chars (without comparison to other chars yet)
-    listOfPossibleCharsInScene = findPossibleCharsInScene(imgThreshScene) # Here we get a list of all the contours in the image that may be characters.
-    
+    imgGrayscaleScene, imgThreshScene = Preprocess.preprocess(imgOriginalScene)         
 
-    if Main.showSteps == True: # show steps #######################################################
-        #print("step 2 - len(listOfPossibleCharsInScene) = " + str(len(listOfPossibleCharsInScene)))
+
+    listOfPossibleCharsInScene = findPossibleCharsInScene(imgThreshScene)
+
+
+    if Main.showSteps == True:
 
         imgContours = np.zeros((height, width, 3), np.uint8)
 
@@ -83,23 +80,23 @@ def detectPlatesInScene(imgOriginalScene):
             #cv2.drawContours(imgContours, contours, -1, (255, 255, 255))
             cv2.drawContours(imgContours, contours, -1, (intRandomBlue, intRandomGreen, intRandomRed))
         # end for
-            
+
             #imgContours = Image.fromarray(imgContours,'RGB').show()
-            
-        
+
+
     # end if # show steps #########################################################################
     for listOfMatchingChars in listOfListsOfMatchingCharsInScene:                   # for each group of matching chars
         possiblePlate = extractPlate(imgOriginalScene, listOfMatchingChars)         # attempt to extract plate
 
         if possiblePlate.imgPlate is not None:                          # if plate was found
             listOfPossiblePlates.append(possiblePlate)                  # add to list of possible plates
-            
+
 
     if Main.showSteps == True:
         print("\n" + str(len(listOfPossiblePlates)) + " possible plates found")
     if Main.showSteps == True: # show steps #######################################################
         print("\n")
-        
+
         Image.fromarray(imgContours,'RGB').show()
         input('Press any key to continue...')
         for i in range(0, len(listOfPossiblePlates)):
@@ -111,15 +108,15 @@ def detectPlatesInScene(imgOriginalScene):
             cv2.line(imgContours, tuple(p2fRectPoints[3]), tuple(p2fRectPoints[0]), Main.SCALAR_RED, 2)
 
             #cv2.imshow("4a", imgContours)
-            
+
             print("possible plate " + str(i) + ", click on any image and press a key to continue . . .")
             #Image.fromarray(listOfPossiblePlates[i].imgPlate,'RGB').show()
-            
+
         # end for
         print("\nplate detection complete, press a key to begin char recognition . . .\n")
         input()
     # end if # show steps #########################################################################
-    
+
     return listOfPossiblePlates
 
 ###################################################################################################
@@ -141,7 +138,7 @@ def findPossibleCharsInScene(imgThresh):
         if Main.showSteps == True: # show steps ###################################################
             cv2.drawContours(imgContours, contours, i, Main.SCALAR_YELLOW)
             #Image.fromarray(imgContours,'RGB').show()
-            
+
         possibleChar = PossibleChar.PossibleChar(contours[i]) # Here we calculate the x,y,w,h,flatdiagonalsize,aspedctratio,area and (x,y) of the center of the rectangle that is bounding the contour.
 
         if DetectChars.checkIfPossibleChar(possibleChar):                   # if contour is a possible char, note this does not compare to other chars (yet) . . .

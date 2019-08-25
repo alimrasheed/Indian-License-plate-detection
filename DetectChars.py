@@ -18,8 +18,6 @@ import matplotlib.pyplot as plt
 from keras.models import load_model
 from keras.optimizers import RMSprop
 
-# module level variables ##########################################################################
-        # constants for checkIfPossibleChar, this checks one possible char only (does not compare to another char)
 MIN_PIXEL_WIDTH = 2
 MIN_PIXEL_HEIGHT = 8
 
@@ -28,7 +26,7 @@ MAX_ASPECT_RATIO = 1.0
 
 MIN_PIXEL_AREA = 80
 
-        # constants for comparing two chars
+
 MIN_DIAG_SIZE_MULTIPLE_AWAY = 0.3
 MAX_DIAG_SIZE_MULTIPLE_AWAY = 5.0
 
@@ -39,7 +37,6 @@ MAX_CHANGE_IN_HEIGHT = 0.2
 
 MAX_ANGLE_BETWEEN_CHARS = 12.0
 
-        # other constants
 MIN_NUMBER_OF_MATCHING_CHARS = 3
 
 RESIZED_CHAR_IMAGE_WIDTH = 64
@@ -47,39 +44,35 @@ RESIZED_CHAR_IMAGE_HEIGHT = 64
 
 MIN_CONTOUR_AREA = 100
 model = load_model('New_model/char-reg.h5')
-###################################################################################################
+
 def loadCNNClassifier():
     model.compile(optimizer = RMSprop(lr=0.001,rho=0.9,epsilon=1e-08,decay=0.005), loss = 'categorical_crossentropy', metrics = ['accuracy'])
-    return True###################################################################################################
+    return True
 def detectCharsInPlates(listOfPossiblePlates):
     intPlateCounter = 0
     imgContours = None
     contours = []
 
     if len(listOfPossiblePlates) == 0:          # if list of possible plates is empty
-        return listOfPossiblePlates             # return
-    # end if
+        return listOfPossiblePlates
 
-            # at this point we can be sure the list of possible plates has at least one plate
+
+
     listOfPossiblePlates_refined = []
     for possiblePlate in listOfPossiblePlates:          # for each possible plate, this is a big for loop that takes up most of the function
-        #possiblePlate.imgPlate = cv2.fastNlMeansDenoisingColored(possiblePlate.imgPlate,None,15,15,7,21)
-        #possiblePlate.imgPlate = cv2.equalizeHist(possiblePlate.imgPlate)
+
         possiblePlate.imgGrayscale, possiblePlate.imgThresh = Preprocess.preprocess(possiblePlate.imgPlate)     # preprocess to get grayscale and threshold images
 
-            
+
         possiblePlate.imgThresh = cv2.resize(possiblePlate.imgThresh, (0, 0), fx = 1.6, fy = 1.6,interpolation=cv2.INTER_LINEAR)
 
-                # threshold again to eliminate any gray areas
+
         thresholdValue, possiblePlate.imgThresh = cv2.threshold(possiblePlate.imgThresh, 0.0, 255.0, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
         # This clears the image more removing all the unknown noise from it.
         if Main.showSteps == True: # show steps ###################################################
             Image.fromarray(possiblePlate.imgThresh).show()
             input('Press Enter to Continue....')
-        # end if # show steps #####################################################################
 
-                # find all possible chars in the plate,
-                # this function first finds all contours, then only includes contours that could be chars (without comparison to other chars yet)
         listOfPossibleCharsInPlate = findPossibleCharsInPlate(possiblePlate.imgGrayscale, possiblePlate.imgThresh)
 
         if Main.showSteps == True: # show steps ###################################################
@@ -106,8 +99,7 @@ def detectCharsInPlates(listOfPossiblePlates):
                 print("chars found in plate number " + str(intPlateCounter) + " = (none), click on any image and press a key to continue . . .")
                 intPlateCounter = intPlateCounter + 1
 
-                
-            # end if # show steps #################################################################
+
 
             possiblePlate.strChars = ""
             continue                        # go back to top of for loop
@@ -184,7 +176,7 @@ def detectCharsInPlates(listOfPossiblePlates):
             cv2.drawContours(imgContours, contours, -1, Main.SCALAR_WHITE)
             imgContours = Image.fromarray(imgContours,'RGB')
             imgContours.show()
-            
+
             #cv2.imshow("The_Longest_list_of_matching_chars", imgContours)
             #cv2.waitKey(0)
         # end if # show steps #####################################################################
@@ -396,7 +388,7 @@ def recognizeCharsInPlate(imgThresh, listOfMatchingChars):
         imgROI = imgThreshColor[currentChar.intBoundingRectY : currentChar.intBoundingRectY + currentChar.intBoundingRectHeight,currentChar.intBoundingRectX : currentChar.intBoundingRectX + currentChar.intBoundingRectWidth]
         imgROI = cv2.copyMakeBorder(imgROI,8,8,8,8,cv2.BORDER_CONSTANT,value = [255,255,255])
 
-                # crop char out of threshold image    
+                # crop char out of threshold image
         #Image.fromarray(imgROI,'RGB').show()
         #input('Press Enter to Continue....')
         imgROIResized = cv2.resize(imgROI, (RESIZED_CHAR_IMAGE_WIDTH, RESIZED_CHAR_IMAGE_HEIGHT),interpolation=cv2.INTER_LINEAR)           # resize image, this is necessary for char recognition

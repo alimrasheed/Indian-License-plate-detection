@@ -4,11 +4,10 @@ import cv2
 import numpy as np
 import math
 
-###################################################################################################
+
 class PossibleChar:
 
-    # constructor #################################################################################
-    def __init__(self, _contour):
+    def __init__(self, contour):
         self.contour = _contour
 
         self.boundingRect = cv2.boundingRect(self.contour) # It gives the (x,y,w,h) of a straight rectangle that bounds the contour. It is not sensetive to the rotation of the obejct ,so its area will not be minimum.
@@ -28,9 +27,3 @@ class PossibleChar:
         self.fltDiagonalSize = math.sqrt((self.intBoundingRectWidth ** 2) + (self.intBoundingRectHeight ** 2))
 
         self.fltAspectRatio = float(self.intBoundingRectWidth) / float(self.intBoundingRectHeight)
-
-
-
-
-
-
